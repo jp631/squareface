@@ -1,4 +1,41 @@
-function SignIn({ onRouteChange }) {
+import React, { Component } from "react";
+
+class SignIn extends Component{
+  constructor(props){
+    super(props)
+    this.state = {
+      signEmail: '',
+      signPassword: ''
+    }
+  }
+
+  onEmailChange = (event) => {
+    this.setState({signEmail: event.target.value})
+  }
+  onPasswordChange = (event) => {
+    this.setState({signPassword: event.target.value})
+  }
+
+  onSubmitSignIn = () => {
+    fetch('http://localhost:3000/signin', {
+      method: 'post',
+      headers: {'content-type': 'application/json'},
+      body: JSON.stringify({
+        email: this.state.signEmail,
+        password: this.state.signPassword
+      })
+    })
+    .then(response => response.json())
+    .then( user =>{
+      if(user.id) {
+        this.props.loadUser(user)
+        this.props.onRouteChange('home')
+      }
+    })
+  }
+  
+  render(){
+
   return (
     <div>
       <main className="pa4 black-80">
@@ -14,6 +51,7 @@ function SignIn({ onRouteChange }) {
                 type="email"
                 name="email-address"
                 id="email-address"
+                onChange={this.onEmailChange}
               />
             </div>
             <div className="mv3">
@@ -25,6 +63,7 @@ function SignIn({ onRouteChange }) {
                 type="password"
                 name="password"
                 id="password"
+                onChange={this.onPasswordChange}
               />
             </div>
           </fieldset>
@@ -33,11 +72,11 @@ function SignIn({ onRouteChange }) {
               className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib"
               type="submit"
               value="Sign in"
-              onClick = {() => {onRouteChange('home')}}
+              onClick = {this.onSubmitSignIn}
             />
           </div>
           <div className="lh-copy mt3">
-            <a href="#0" className="f6 link dim black db" onClick={()=> onRouteChange('register')}>
+            <a href="#0" className="f6 link dim black db" onClick={()=> this.props.onRouteChange('register')}>
               Register
             </a>
           </div>
@@ -46,5 +85,7 @@ function SignIn({ onRouteChange }) {
     </div>
   );
 }
+}
+
 
 export default SignIn;
